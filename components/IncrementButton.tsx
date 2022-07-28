@@ -11,7 +11,7 @@ import idl from "../idl.json"
 const PROGRAM_ID = `3ycJzxn4Akd2A3G2EDAW5RrM5V5DeRWt84MWHJ1ctLUr`
 const DATA_ACCOUNT_PUBKEY = `4EgPRavdTMXD42zssM74oAFR8Ea6Upjt2snyNdsiUaFw`
 
-export const PingButton: FC = () => {
+export const IncrementButton: FC = () => {
   const { connection } = useConnection()
   const { sendTransaction } = useWallet()
   const wallet = useAnchorWallet()
