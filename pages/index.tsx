@@ -1,23 +1,30 @@
 import { NextPage } from "next"
 import styles from "../styles/Home.module.css"
-import WalletContextProvider from "../components/WalletContextProvider"
 import { AppBar } from "../components/AppBar"
-import { IncrementButton } from "../components/IncrementButton"
+import { useWallet } from "@solana/wallet-adapter-react"
+import { Increment } from "../components/Increment"
+import { Initialize } from "../components/Initialize"
+import { useState } from "react"
 import Head from "next/head"
 
 const Home: NextPage = (props) => {
+  const [counter, setCounter] = useState("")
+  const wallet = useWallet()
+
   return (
     <div className={styles.App}>
       <Head>
-        <title>Wallet-Adapter Example</title>
-        <meta name="description" content="Wallet-Adapter Example" />
+        <title>Anchor Frontend Example</title>
       </Head>
-      <WalletContextProvider>
-        <AppBar />
-        <div className={styles.AppBody}>
-          <IncrementButton />
-        </div>
-      </WalletContextProvider>
+      <AppBar />
+      <div className={styles.AppBody}>
+        {wallet.connected ? (
+          <Initialize setCounter={setCounter} />
+        ) : (
+          <>Connect Wallet</>
+        )}
+        {counter && <Increment counter={counter} />}
+      </div>
     </div>
   )
 }

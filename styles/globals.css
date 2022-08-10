@@ -15,3 +15,11 @@ code {
 a {
   color: white;
 }
+
+/* a:hover {
+  background-color: grey;
+} */
+
+a:active {
+  color: grey;
+}

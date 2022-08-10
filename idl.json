@@ -1,9 +1,9 @@
 {
   "version": "0.1.0",
-  "name": "increment_counter",
+  "name": "counter",
   "instructions": [
     {
-      "name": "create",
+      "name": "initialize",
       "accounts": [
         { "name": "counter", "isMut": true, "isSigner": true },
         { "name": "user", "isMut": true, "isSigner": true },
@@ -13,14 +13,6 @@
     },
     {
       "name": "increment",
-      "accounts": [
-        { "name": "counter", "isMut": true, "isSigner": false },
-        { "name": "user", "isMut": false, "isSigner": true }
-      ],
-      "args": []
-    },
-    {
-      "name": "decrement",
       "accounts": [
         { "name": "counter", "isMut": true, "isSigner": false },
         { "name": "user", "isMut": false, "isSigner": true }
