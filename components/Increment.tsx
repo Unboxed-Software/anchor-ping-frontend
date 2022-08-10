@@ -16,6 +16,7 @@ export interface Props {
 
 export const Increment: FC<Props> = ({ counter }) => {
   const [url, setUrl] = useState("")
+
   const { connection } = useConnection()
   const { sendTransaction } = useWallet()
   const wallet = useAnchorWallet()
@@ -27,9 +28,6 @@ export const Increment: FC<Props> = ({ counter }) => {
   const program = new anchor.Program(idl as anchor.Idl, programId)
 
   const onClick = async () => {
-    if (!connection || !wallet) {
-      return
-    }
     const transaction = new anchor.web3.Transaction()
     const instruction = await program.methods
       .increment()

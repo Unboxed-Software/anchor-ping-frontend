@@ -16,6 +16,7 @@ export interface Props {
 
 export const Initialize: FC<Props> = ({ setCounter }) => {
   const [url, setUrl] = useState("")
+
   const { connection } = useConnection()
   const { sendTransaction } = useWallet()
   const wallet = useAnchorWallet()
@@ -29,9 +30,6 @@ export const Initialize: FC<Props> = ({ setCounter }) => {
   const newAccount = anchor.web3.Keypair.generate()
 
   const onClick = async () => {
-    if (!connection || !wallet) {
-      return
-    }
     const transaction = await program.methods
       .initialize()
       .accounts({
