@@ -16,9 +16,9 @@ export interface Props {
 
 export const Initialize: FC<Props> = ({ setCounter }) => {
   const [url, setUrl] = useState("")
+  const { sendTransaction } = useWallet()
 
   const { connection } = useConnection()
-  const { sendTransaction } = useWallet()
   const wallet = useAnchorWallet()
 
   const provider = new anchor.AnchorProvider(connection, wallet, {})

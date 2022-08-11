@@ -16,9 +16,9 @@ export interface Props {
 
 export const Increment: FC<Props> = ({ counter }) => {
   const [url, setUrl] = useState("")
+  const { sendTransaction } = useWallet()
 
   const { connection } = useConnection()
-  const { sendTransaction } = useWallet()
   const wallet = useAnchorWallet()
 
   const provider = new anchor.AnchorProvider(connection, wallet, {})
