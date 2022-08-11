@@ -16,39 +16,8 @@ export interface Props {
 
 export const Initialize: FC<Props> = ({ setCounter }) => {
   const [url, setUrl] = useState("")
-  const { sendTransaction } = useWallet()
 
-  const { connection } = useConnection()
-  const wallet = useAnchorWallet()
-
-  const provider = new anchor.AnchorProvider(connection, wallet, {})
-  anchor.setProvider(provider)
-
-  const programId = new anchor.web3.PublicKey(PROGRAM_ID)
-  const program = new anchor.Program(idl as anchor.Idl, programId)
-
-  const newAccount = anchor.web3.Keypair.generate()
-
-  const onClick = async () => {
-    const transaction = await program.methods
-      .initialize()
-      .accounts({
-        counter: newAccount.publicKey,
-        user: wallet.publicKey,
-        systemAccount: anchor.web3.SystemProgram.programId,
-      })
-      .transaction()
-
-    sendTransaction(transaction, connection, { signers: [newAccount] }).then(
-      (sig) => {
-        console.log(
-          `Transaction: https://explorer.solana.com/tx/${sig}?cluster=devnet`
-        )
-        setUrl(`https://explorer.solana.com/tx/${sig}?cluster=devnet`)
-        setCounter(newAccount.publicKey)
-      }
-    )
-  }
+  const onClick = async () => {}
 
   return (
     <div>
