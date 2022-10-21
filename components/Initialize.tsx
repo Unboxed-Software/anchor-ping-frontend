@@ -4,62 +4,53 @@ import {
   useAnchorWallet,
 } from "@solana/wallet-adapter-react"
 import * as anchor from "@project-serum/anchor"
-import { FC, useState } from "react"
-import styles from "../styles/Button.module.css"
+import { FC, useEffect, useState } from "react"
 import idl from "../idl.json"
+import { Button } from "@chakra-ui/react"
 
-const PROGRAM_ID = `9pbyP2VX8Rc7v4nR5n5Kf5azmnw5hHfkJcZKPHXW98mf`
+const PROGRAM_ID = new anchor.web3.PublicKey(
+  `9sMy4hnC9MML6mioESFZmzpntt3focqwUq1ymPgbMf64`
+)
 
 export interface Props {
   setCounter
+  setTransactionUrl
 }
 
-export const Initialize: FC<Props> = ({ setCounter }) => {
-  const [url, setUrl] = useState("")
-  const { sendTransaction } = useWallet()
+export const Initialize: FC<Props> = ({ setCounter, setTransactionUrl }) => {
+  const [program, setProgram] = useState<anchor.Program>()
 
   const { connection } = useConnection()
   const wallet = useAnchorWallet()
 
-  const provider = new anchor.AnchorProvider(connection, wallet, {})
-  anchor.setProvider(provider)
+  useEffect(() => {
+    let provider: anchor.Provider
 
-  const programId = new anchor.web3.PublicKey(PROGRAM_ID)
-  const program = new anchor.Program(idl as anchor.Idl, programId)
+    try {
+      provider = anchor.getProvider()
+    } catch {
+      provider = new anchor.AnchorProvider(connection, wallet, {})
+      anchor.setProvider(provider)
+    }
 
-  const newAccount = anchor.web3.Keypair.generate()
+    const program = new anchor.Program(idl as anchor.Idl, PROGRAM_ID)
+    setProgram(program)
+  }, [])
 
   const onClick = async () => {
-    const transaction = await program.methods
+    const newAccount = anchor.web3.Keypair.generate()
+
+    const sig = await program.methods
       .initialize()
       .accounts({
         counter: newAccount.publicKey,
-        user: wallet.publicKey,
-        systemAccount: anchor.web3.SystemProgram.programId,
       })
-      .transaction()
+      .signers([newAccount])
+      .rpc()
 
-    sendTransaction(transaction, connection, { signers: [newAccount] }).then(
-      (sig) => {
-        console.log(
-          `Transaction: https://explorer.solana.com/tx/${sig}?cluster=devnet`
-        )
-        setUrl(`https://explorer.solana.com/tx/${sig}?cluster=devnet`)
-        setCounter(newAccount.publicKey)
-      }
-    )
+    setTransactionUrl(`https://explorer.solana.com/tx/${sig}?cluster=devnet`)
+    setCounter(newAccount.publicKey)
   }
 
-  return (
-    <div>
-      <div className={styles.buttonContainer} onClick={onClick}>
-        <button className={styles.button}>Initialize Counter</button>
-      </div>
-      {url && (
-        <a href={url} target="_blank">
-          View Transaction
-        </a>
-      )}
-    </div>
-  )
+  return <Button onClick={onClick}>Initialize Counter</Button>
 }

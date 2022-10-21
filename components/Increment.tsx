@@ -4,59 +4,73 @@ import {
   useAnchorWallet,
 } from "@solana/wallet-adapter-react"
 import * as anchor from "@project-serum/anchor"
-import { FC, useState } from "react"
-import styles from "../styles/Button.module.css"
+import { FC, useCallback, useEffect, useState } from "react"
 import idl from "../idl.json"
+import { Button, HStack, VStack, Text } from "@chakra-ui/react"
 
-const PROGRAM_ID = `9pbyP2VX8Rc7v4nR5n5Kf5azmnw5hHfkJcZKPHXW98mf`
+const PROGRAM_ID = `9sMy4hnC9MML6mioESFZmzpntt3focqwUq1ymPgbMf64`
 
 export interface Props {
   counter
+  setTransactionUrl
 }
 
-export const Increment: FC<Props> = ({ counter }) => {
-  const [url, setUrl] = useState("")
-  const { sendTransaction } = useWallet()
-
+export const Increment: FC<Props> = ({ counter, setTransactionUrl }) => {
+  const [count, setCount] = useState(0)
+  const [program, setProgram] = useState<anchor.Program>()
   const { connection } = useConnection()
   const wallet = useAnchorWallet()
 
-  const provider = new anchor.AnchorProvider(connection, wallet, {})
-  anchor.setProvider(provider)
+  useEffect(() => {
+    let provider: anchor.Provider
 
-  const programId = new anchor.web3.PublicKey(PROGRAM_ID)
-  const program = new anchor.Program(idl as anchor.Idl, programId)
+    try {
+      provider = anchor.getProvider()
+    } catch {
+      provider = new anchor.AnchorProvider(connection, wallet, {})
+      anchor.setProvider(provider)
+    }
 
-  const onClick = async () => {
-    const transaction = new anchor.web3.Transaction()
-    const instruction = await program.methods
+    const program = new anchor.Program(idl as anchor.Idl, PROGRAM_ID)
+    setProgram(program)
+    refreshCount(program)
+  }, [])
+
+  const incrementCount = useCallback(async () => {
+    const sig = await program.methods
       .increment()
       .accounts({
         counter: counter,
-        user: wallet.publicKey,
       })
-      .instruction()
+      .rpc()
 
-    transaction.add(instruction)
+    setTransactionUrl(`https://explorer.solana.com/tx/${sig}?cluster=devnet`)
+  }, [program])
 
-    sendTransaction(transaction, connection).then((sig) => {
-      console.log(
-        `Transaction: https://explorer.solana.com/tx/${sig}?cluster=devnet`
-      )
-      setUrl(`https://explorer.solana.com/tx/${sig}?cluster=devnet`)
-    })
+  const decrementCount = useCallback(async () => {
+    const sig = await program.methods
+      .decrement()
+      .accounts({
+        counter: counter,
+      })
+      .rpc()
+
+    setTransactionUrl(`https://explorer.solana.com/tx/${sig}?cluster=devnet`)
+  }, [program])
+
+  const refreshCount = async (program) => {
+    const counterAccount = await program.account.counter.fetch(counter)
+    setCount(counterAccount.count.toNumber())
   }
 
   return (
-    <div>
-      <div className={styles.buttonContainer} onClick={onClick}>
-        <button className={styles.button}>Increment Counter</button>
-      </div>
-      {url && (
-        <a href={url} target="_blank">
-          View Transaction
-        </a>
-      )}
-    </div>
+    <VStack>
+      <HStack>
+        <Button onClick={incrementCount}>Increment</Button>
+        <Button onClick={decrementCount}>Decrement</Button>
+        <Button onClick={() => refreshCount(program)}>Refresh count</Button>
+      </HStack>
+      <Text color="white">Count: {count}</Text>
+    </VStack>
   )
 }
