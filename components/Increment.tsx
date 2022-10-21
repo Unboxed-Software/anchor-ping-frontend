@@ -18,40 +18,10 @@ export interface Props {
 export const Increment: FC<Props> = ({ counter, setTransactionUrl }) => {
   const [count, setCount] = useState(0)
   const [program, setProgram] = useState<anchor.Program>()
-  const { connection } = useConnection()
-  const wallet = useAnchorWallet()
 
-  useEffect(() => {
-    let provider: anchor.Provider
+  const incrementCount = async () => {}
 
-    try {
-      provider = anchor.getProvider()
-    } catch {
-      provider = new anchor.AnchorProvider(connection, wallet, {})
-      anchor.setProvider(provider)
-    }
-
-    const program = new anchor.Program(idl as anchor.Idl, PROGRAM_ID)
-    setProgram(program)
-    refreshCount(program)
-  }, [])
-
-  const incrementCount = async () => {
-    const sig = await program.methods
-      .increment()
-      .accounts({
-        counter: counter,
-        user: wallet.publicKey,
-      })
-      .rpc()
-
-    setTransactionUrl(`https://explorer.solana.com/tx/${sig}?cluster=devnet`)
-  }
-
-  const refreshCount = async (program) => {
-    const counterAccount = await program.account.counter.fetch(counter)
-    setCount(counterAccount.count.toNumber())
-  }
+  const refreshCount = async (program) => {}
 
   return (
     <VStack>
