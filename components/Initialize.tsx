@@ -8,7 +8,9 @@ import { FC, useState } from "react"
 import styles from "../styles/Button.module.css"
 import idl from "../idl.json"
 
-const PROGRAM_ID = `9pbyP2VX8Rc7v4nR5n5Kf5azmnw5hHfkJcZKPHXW98mf`
+const PROGRAM_ID = new anchor.web3.PublicKey(
+  `9pbyP2VX8Rc7v4nR5n5Kf5azmnw5hHfkJcZKPHXW98mf`
+)
 
 export interface Props {
   setCounter
