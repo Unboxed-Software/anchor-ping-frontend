@@ -30,9 +30,7 @@ export const Increment: FC<Props> = ({ counter, setTransactionUrl }) => {
       anchor.setProvider(provider);
     }
 
-    const program = new anchor.Program(
-      idl as AnchorCounter
-    ) as anchor.Program<AnchorCounter>;
+    const program = new anchor.Program(idl as AnchorCounter);
     setProgram(program);
     refreshCount(program);
   }, []);
