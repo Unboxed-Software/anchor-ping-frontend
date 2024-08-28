@@ -3,14 +3,12 @@ import {
   useWallet,
   useAnchorWallet,
 } from "@solana/wallet-adapter-react"
-import * as anchor from "@project-serum/anchor"
+import * as anchor from "@coral-xyz/anchor"
 import { FC, useEffect, useState } from "react"
 import idl from "../idl.json"
 import { Button } from "@chakra-ui/react"
+import { AnchorCounter } from "../types/AnchorCounter"
 
-const PROGRAM_ID = new anchor.web3.PublicKey(
-  `9pbyP2VX8Rc7v4nR5n5Kf5azmnw5hHfkJcZKPHXW98mf`
-)
 
 export interface Props {
   setCounter
@@ -18,7 +16,7 @@ export interface Props {
 }
 
 export const Initialize: FC<Props> = ({ setCounter, setTransactionUrl }) => {
-  const [program, setProgram] = useState<anchor.Program>()
+  const [program, setProgram] = useState<anchor.Program<AnchorCounter>>()
 
   const { connection } = useConnection()
   const wallet = useAnchorWallet()
@@ -33,7 +31,7 @@ export const Initialize: FC<Props> = ({ setCounter, setTransactionUrl }) => {
       anchor.setProvider(provider)
     }
 
-    const program = new anchor.Program(idl as anchor.Idl, PROGRAM_ID)
+    const program = new anchor.Program(idl as AnchorCounter) as anchor.Program<AnchorCounter>
     setProgram(program)
   }, [])
 
