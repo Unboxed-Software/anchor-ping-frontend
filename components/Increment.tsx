@@ -3,12 +3,11 @@ import {
   useWallet,
   useAnchorWallet,
 } from "@solana/wallet-adapter-react"
-import * as anchor from "@project-serum/anchor"
+import * as anchor from "@coral-xyz/anchor"
 import { FC, useCallback, useEffect, useState } from "react"
 import idl from "../idl.json"
 import { Button, HStack, VStack, Text } from "@chakra-ui/react"
-
-const PROGRAM_ID = `9sMy4hnC9MML6mioESFZmzpntt3focqwUq1ymPgbMf64`
+import { AnchorCounter } from "../types/AnchorCounter"
 
 export interface Props {
   counter
@@ -17,7 +16,7 @@ export interface Props {
 
 export const Increment: FC<Props> = ({ counter, setTransactionUrl }) => {
   const [count, setCount] = useState(0)
-  const [program, setProgram] = useState<anchor.Program>()
+  const [program, setProgram] = useState<anchor.Program<AnchorCounter>>()
   const { connection } = useConnection()
   const wallet = useAnchorWallet()
 
@@ -31,7 +30,7 @@ export const Increment: FC<Props> = ({ counter, setTransactionUrl }) => {
       anchor.setProvider(provider)
     }
 
-    const program = new anchor.Program(idl as anchor.Idl, PROGRAM_ID)
+    const program = new anchor.Program(idl as AnchorCounter)
     setProgram(program)
     refreshCount(program)
   }, [])
