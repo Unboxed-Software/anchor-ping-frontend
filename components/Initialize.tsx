@@ -2,43 +2,42 @@ import {
   useConnection,
   useWallet,
   useAnchorWallet,
-} from "@solana/wallet-adapter-react"
-import * as anchor from "@project-serum/anchor"
-import { FC, useEffect, useState } from "react"
-import idl from "../idl.json"
-import { Button } from "@chakra-ui/react"
-
-const PROGRAM_ID = new anchor.web3.PublicKey(
-  `9sMy4hnC9MML6mioESFZmzpntt3focqwUq1ymPgbMf64`
-)
+} from "@solana/wallet-adapter-react";
+import * as anchor from "@coral-xyz/anchor";
+import { FC, useEffect, useState } from "react";
+import idl from "../idl.json";
+import { Button } from "@chakra-ui/react";
+import { AnchorCounter } from "../types/AnchorContract";
 
 export interface Props {
-  setCounter
-  setTransactionUrl
+  setCounter;
+  setTransactionUrl;
 }
 
 export const Initialize: FC<Props> = ({ setCounter, setTransactionUrl }) => {
-  const [program, setProgram] = useState<anchor.Program>()
+  const [program, setProgram] = useState<anchor.Program<AnchorCounter>>();
 
-  const { connection } = useConnection()
-  const wallet = useAnchorWallet()
+  const { connection } = useConnection();
+  const wallet = useAnchorWallet();
 
   useEffect(() => {
-    let provider: anchor.Provider
+    let provider: anchor.Provider;
 
     try {
-      provider = anchor.getProvider()
+      provider = anchor.getProvider();
     } catch {
-      provider = new anchor.AnchorProvider(connection, wallet, {})
-      anchor.setProvider(provider)
+      provider = new anchor.AnchorProvider(connection, wallet, {});
+      anchor.setProvider(provider);
     }
 
-    const program = new anchor.Program(idl as anchor.Idl, PROGRAM_ID)
-    setProgram(program)
-  }, [])
+    const program = new anchor.Program(
+      idl as AnchorCounter
+    ) as anchor.Program<AnchorCounter>;
+    setProgram(program);
+  }, []);
 
   const onClick = async () => {
-    const newAccount = anchor.web3.Keypair.generate()
+    const newAccount = anchor.web3.Keypair.generate();
 
     const sig = await program.methods
       .initialize()
@@ -46,11 +45,11 @@ export const Initialize: FC<Props> = ({ setCounter, setTransactionUrl }) => {
         counter: newAccount.publicKey,
       })
       .signers([newAccount])
-      .rpc()
+      .rpc();
 
-    setTransactionUrl(`https://explorer.solana.com/tx/${sig}?cluster=devnet`)
-    setCounter(newAccount.publicKey)
-  }
+    setTransactionUrl(`https://explorer.solana.com/tx/${sig}?cluster=devnet`);
+    setCounter(newAccount.publicKey);
+  };
 
-  return <Button onClick={onClick}>Initialize Counter</Button>
-}
+  return <Button onClick={onClick}>Initialize Counter</Button>;
+};
