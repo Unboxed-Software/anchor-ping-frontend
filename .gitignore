@@ -1,32 +1,48 @@
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+# See http://help.github.com/ignore-files/ for more about ignoring files.
 
+# compiled output
+dist
+tmp
+/out-tsc
 # dependencies
-/node_modules
-/.pnp
-.pnp.js
-
-# testing
-/coverage
-
-# next.js
-/.next/
-/out/
-
-# production
-/build
-
+node_modules
+# IDEs and editors
+/.idea
+.project
+.classpath
+.c9/
+*.launch
+.settings/
+*.sublime-workspace
+# IDE - VSCode
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
 # misc
+/.sass-cache
+/connect.lock
+/coverage
+/libpeerconnection.log
+npm-debug.log
+yarn-error.log
+testem.log
+/typings
+# System Files
 .DS_Store
-*.pem
-
-# debug
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-.pnpm-debug.log*
-
-# local env files
-.env*.local
-
-# vercel
-.vercel
+Thumbs.db
+.nx/cache
+# Next.js
+.next
+out
+.anchor
+anchor/target/deploy
+anchor/target/debug
+anchor/target/release
+anchor/target/sbf-solana-solana
+anchor/target/.rustc_info.json
+!anchor/target/idl/*.json
+!anchor/target/types/*.ts
+test-ledger
+.yarn
